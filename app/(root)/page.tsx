@@ -1,5 +1,8 @@
 import SearchForm from "@/components/SearchForm";
-import StartupCard from "@/components/StartupCard";
+import StartupCard, { StartupTypeCard } from "@/components/StartupCard";
+import { client } from "@/sanity/lib/client";
+import { sanityFetch, SanityLive } from "@/sanity/lib/live";
+import { STARTUPS_QUERY } from "@/sanity/lib/queries";
 
 export default async function Home({
   searchParams,
@@ -7,21 +10,23 @@ export default async function Home({
   searchParams: Promise<{ query?: string }>;
 }) {
   const query = (await searchParams).query;
-
-  const posts = [
-    {
-      _createdAt:  new Date(),
-      // _updatedAt: new Date(),
-      views: 55,
-      author: { _id: 1, name: 'Saptarshi' },
-      _id: 1,
-      description: "This is description",
-      image:
-        "https://c4.wallpaperflare.com/wallpaper/365/244/884/uchiha-itachi-naruto-shippuuden-anbu-silhouette-wallpaper-preview.jpg",
-      category: "Human",
-      title: "Exploring human behaviour",
-    },
-  ];
+  // const posts = await client.fetch(STARTUPS_QUERY);
+  const { data: posts } = await sanityFetch({ query: STARTUPS_QUERY });
+  console.log(JSON.stringify(posts, null, 2));
+  // const posts = [
+  //   {
+  //     _createdAt:  new Date(),
+  //     // _updatedAt: new Date(),
+  //     views: 55,
+  //     author: { _id: 1, name: 'Saptarshi' },
+  //     _id: 1,
+  //     description: "This is description",
+  //     image:
+  //       "https://c4.wallpaperflare.com/wallpaper/365/244/884/uchiha-itachi-naruto-shippuuden-anbu-silhouette-wallpaper-preview.jpg",
+  //     category: "Human",
+  //     title: "Exploring human behaviour",
+  //   },
+  // ];
   return (
     <>
       <section className="pink_container">
@@ -44,7 +49,7 @@ export default async function Home({
         </p>
 
         <ul className="mt-7 card_grid">
-        {posts?.length > 0 ? (
+          {posts?.length > 0 ? (
             posts.map((post: StartupTypeCard, index: number) => (
               <StartupCard key={post?._id} post={post} />
             ))
@@ -53,6 +58,8 @@ export default async function Home({
           )}
         </ul>
       </section>
+
+      <SanityLive />
     </>
   );
 }
