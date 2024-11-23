@@ -10,6 +10,7 @@ import { formSchema } from "@/lib/validation";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { createPitch } from "@/lib/actions";
 
 // errors.flatten --> put all the errors in a single array
 
@@ -31,16 +32,19 @@ const StartupForm = () => {
 
       await formSchema.parseAsync(formValues);
       console.log(formValues);
-      // if (result.status == "SUCCESS") {
-      //   toast({
-      //     title: "Success",
-      //     description: "Your startup pitch has been created successfully",
-      //   });
 
-      //   router.push(`/startup/${result._id}`);
-      // }
+      const result = await createPitch(prevState, formData, pitch);
 
-     // return result;
+      if (result.status == "SUCCESS") {
+        toast({
+          title: "Success",
+          description: "Your startup pitch has been created successfully",
+        });
+
+        router.push(`/startup/${result._id}`);
+      }
+
+      return result;
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErorrs = error.flatten().fieldErrors;

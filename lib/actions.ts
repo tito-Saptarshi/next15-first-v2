@@ -1,5 +1,5 @@
 "use server";
-
+// reloading from cdn
 // current: slug --> current value of slug
 
 import { auth } from "@/auth";
